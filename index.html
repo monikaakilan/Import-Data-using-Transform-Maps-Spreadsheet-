@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Import Data using Transform Maps (Spreadsheet)</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Segoe UI", Arial, sans-serif;
+    }
+
+    body {
+      background: #f4f7fb;
+      color: #172033;
+      line-height: 1.6;
+    }
+
+    header {
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      color: white;
+      padding: 18px 7%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin-left: 25px;
+      font-weight: 500;
+    }
+
+    nav a:hover {
+      opacity: 0.8;
+    }
+
+    .hero {
+      padding: 75px 7%;
+      background: linear-gradient(135deg, #eef2ff, #faf5ff);
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 45px;
+      align-items: center;
+    }
+
+    .hero h1 {
+      font-size: clamp(32px, 5vw, 58px);
+      line-height: 1.1;
+      margin-bottom: 20px;
+      color: #27256f;
+    }
+
+    .hero p {
+      color: #5b6475;
+      font-size: 18px;
+      max-width: 650px;
+      margin-bottom: 28px;
+    }
+
+    .btn {
+      border: none;
+      padding: 13px 22px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 600;
+      background: #5b5ce2;
+      color: white;
+      transition: .3s;
+    }
+
+    .btn:hover {
+      background: #4244bd;
+      transform: translateY(-2px);
+    }
+
+    .hero-card {
+      background: white;
+      padding: 28px;
+      border-radius: 25px;
+      box-shadow: 0 15px 40px rgba(50, 40, 120, .12);
+    }
+
+    .spreadsheet {
+      border: 1px solid #e5e7eb;
+      border-radius: 15px;
+      overflow: hidden;
+    }
+
+    .sheet-head {
+      background: #eef2ff;
+      padding: 13px;
+      font-weight: 700;
+      color: #4f46e5;
+    }
+
+    .sheet-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-top: 1px solid #eee;
+    }
+
+    .sheet-row span {
+      padding: 10px;
+      border-right: 1px solid #eee;
+      font-size: 14px;
+    }
+
+    section {
+      padding: 70px 7%;
+    }
+
+    .section-title {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .section-title h2 {
+      font-size: 34px;
+      color: #20255a;
+      margin-bottom: 8px;
+    }
+
+    .section-title p {
+      color: #667085;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 25px;
+    }
+
+    .card {
+      background: white;
+      padding: 28px;
+      border-radius: var(--radius);
+      box-shadow: 0 10px 30px rgba(30, 40, 70, .07);
+      border: 1px solid #edf0f5;
+      transition: .3s;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 18px 35px rgba(30, 40, 70, .12);
+    }
+
+    .icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 14px;
+      background: #eef2ff;
+      display: grid;
+      place-items: center;
+      font-size: 25px;
+      margin-bottom: 18px;
+    }
+
+    .card h3 {
+      margin-bottom: 10px;
+      color: #25285e;
+    }
+
+    .card p {
+      color: #667085;
+    }
+
+    .steps {
+      max-width: 850px;
+      margin: auto;
+    }
+
+    .step {
+      display: flex;
+      gap: 20px;
+      background: white;
+      margin-bottom: 18px;
+      padding: 22px;
+      border-radius: 16px;
+      box-shadow: 0 7px 20px rgba(30,40,70,.06);
+    }
+
+    .number {
+      min-width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: #5b5ce2;
+      color: white;
+      display: grid;
+      place-items: center;
+      font-weight: bold;
+    }
+
+    .demo {
+      background: #171a38;
+      color: white;
+    }
+
+    .demo-container {
+      max-width: 900px;
+      margin: auto;
+      background: #22264a;
+      padding: 30px;
+      border-radius: 24px;
+      box-shadow: 0 15px 40px rgba(0,0,0,.2);
+    }
+
+    .demo-container h2 {
+      margin-bottom: 8px;
+    }
+
+    .demo-container > p {
+      color: #c5c9e5;
+      margin-bottom: 25px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 13px;
+      border-radius: 9px;
+      border: 1px solid #454a78;
+      background: #171a38;
+      color: white;
+      outline: none;
+    }
+
+    input:focus, select:focus {
+      border-color: #8b8df4;
+    }
+
+    .ai-output {
+      margin-top: 20px;
+      padding: 20px;
+      background: #171a38;
+      border: 1px solid #454a78;
+      border-radius: 15px;
+      min-height: 100px;
+      color: #e8eaff;
+    }
+
+    .gemini {
+      background: linear-gradient(135deg, #eef2ff, #ecfeff);
+    }
+
+    .gemini-box {
+      max-width: 1000px;
+      margin: auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      align-items: center;
+    }
+
+    .gemini-content h2 {
+      font-size: 36px;
+      color: #302b72;
+      margin-bottom: 15px;
+    }
+
+    .gemini-content p {
+      color: #5f6675;
+      margin-bottom: 15px;
+    }
+
+    .gemini-chat {
+      background: white;
+      padding: 25px;
+      border-radius: 22px;
+      box-shadow: 0 12px 35px rgba(40,50,100,.1);
+    }
+
+    .message {
+      padding: 13px 15px;
+      border-radius: 13px;
+      margin-bottom: 12px;
+      font-size: 14px;
+    }
+
+    .user-msg {
+      background: #eef2ff;
+      text-align: right;
+    }
+
+    .ai-msg {
+      background: #f0fdf4;
+      color: #166534;
+    }
+
+    .quiz {
+      max-width: 700px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .quiz-question {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    .option {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 13px;
+      margin: 10px 0;
+      border: 1px solid #dfe3eb;
+      border-radius: 10px;
+      background: white;
+      cursor: pointer;
+    }
+
+    .option:hover {
+      background: #eef2ff;
+      border-color: #7779ed;
+    }
+
+    #quizResult {
+      margin-top: 18px;
+      font-weight: 600;
+    }
+
+    footer {
+      background: #151832;
+      color: #cbd0e6;
+      text-align: center;
+      padding: 28px;
+    }
+
+    @media (max-width: 850px) {
+      .hero,
+      .gemini-box {
+        grid-template-columns: 1fr;
+      }
+
+      .cards {
+        grid-template-columns: 1fr;
+      }
+
+      nav {
+        display: none;
+      }
+    }
+
+    @media (max-width: 550px) {
+      section {
+        padding: 50px 5%;
+      }
+
+      .hero {
+        padding: 55px 5%;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .step {
+        padding: 17px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">📊 TransformLearn AI</div>
+  <nav>
+    <a href="#concept">Concept</a>
+    <a href="#steps">Steps</a>
+    <a href="#gemini">Gemini AI</a>
+    <a href="#quiz">Quiz</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <div>
+    <h1>Import Data using Transform Maps</h1>
+    <p>
+      Learn how spreadsheet data can be imported, transformed, and mapped
+      into a target system through a simple and interactive educational experience.
+    </p>
+    <button class="btn" onclick="scrollToSection('steps')">
+      Start Learning →
+    </button>
+  </div>
+
+  <div class="hero-card">
+    <div class="spreadsheet">
+      <div class="sheet-head">📑 Spreadsheet Preview</div>
+      <div class="sheet-row">
+        <span><b>Name</b></span>
+        <span><b>Email</b></span>
+      </div>
+      <div class="sheet-row">
+        <span>Arun</span>
+        <span>arun@email.com</span>
+      </div>
+      <div class="sheet-row">
+        <span>Priya</span>
+        <span>priya@email.com</span>
+      </div>
+      <div class="sheet-row">
+        <span>Kavin</span>
+        <span>kavin@email.com</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="concept">
+  <div class="section-title">
+    <h2>What is a Transform Map?</h2>
+    <p>Understand the basic idea before importing your spreadsheet.</p>
+  </div>
+
+  <div class="cards">
+    <div class="card">
+      <div class="icon">📥</div>
+      <h3>Import Data</h3>
+      <p>
+        Bring data from an external spreadsheet or file into the target
+        platform using an import process.
+      </p>
+    </div>
+
+    <div class="card">
+      <div class="icon">🔄</div>
+      <h3>Transform</h3>
+      <p>
+        Convert incoming values into the format required by the destination
+        table or application.
+      </p>
+    </div>
+
+    <div class="card">
+      <div class="icon">🗺️</div>
+      <h3>Map Fields</h3>
+      <p>
+        Connect spreadsheet columns with the corresponding fields in the
+        target database.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section id="steps">
+  <div class="section-title">
+    <h2>Import Process</h2>
+    <p>Follow these simple steps to understand the workflow.</p>
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="number">1</div>
+      <div>
+        <h3>Prepare the Spreadsheet</h3>
+        <p>Organize the data into columns with meaningful headings.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="number">2</div>
+      <div>
+        <h3>Upload the Data</h3>
+        <p>Upload or select the spreadsheet as the source for the import.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="number">3</div>
+      <div>
+        <h3>Create a Transform Map</h3>
+        <p>Define how incoming spreadsheet fields correspond to target fields.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="number">4</div>
+      <div>
+        <h3>Transform the Data</h3>
+        <p>Apply required field mappings and transformation logic.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="number">5</div>
+      <div>
+        <h3>Validate the Import</h3>
+        <p>Check the imported records and identify any errors or missing values.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="demo">
+  <div class="demo-container">
+    <h2>🧪 Interactive Transform Map Demo</h2>
+    <p>Enter sample spreadsheet data and simulate a field transformation.</p>
+
+    <div class="form-grid">
+      <input id="nameInput" type="text" placeholder="Student Name" />
+      <input id="emailInput" type="text" placeholder="Email Address" />
+
+      <select id="transformSelect">
+        <option value="uppercase">Name → UPPERCASE</option>
+        <option value="lowercase">Email → lowercase</option>
+        <option value="domain">Email → extract domain</option>
+      </select>
+
+      <button class="btn" onclick="transformData()">Transform Data</button>
+    </div>
+
+    <div class="ai-output" id="transformOutput">
+      Your transformed data will appear here.
+    </div>
+  </div>
+</section>
+
+<section id="gemini" class="gemini">
+  <div class="gemini-box">
+    <div class="gemini-content">
+      <h2>✨ Learn with Gemini AI</h2>
+      <p>
+        Gemini AI can be used as an educational assistant to explain
+        Transform Maps, clarify concepts, generate examples, and help
+        students understand data-import workflows.
+      </p>
+
+      <p>
+        <b>Example educational prompt:</b><br>
+        "Explain Transform Maps using a simple spreadsheet example."
+      </p>
+
+      <button class="btn" onclick="askGemini()">
+        Ask Gemini Demo
+      </button>
+    </div>
+
+    <div class="gemini-chat">
+      <div class="message user-msg">
+        How does a Transform Map work?
+      </div>
+
+      <div class="message ai-msg" id="geminiAnswer">
+        Gemini AI explanation will appear here.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="quiz">
+  <div class="section-title">
+    <h2>🎓 Quick Knowledge Check</h2>
+    <p>Test what you learned.</p>
+  </div>
+
+  <div class="quiz">
+    <div class="quiz-question">
+      What is the main purpose of a Transform Map?
+    </div>
+
+    <button class="option" onclick="checkAnswer(false)">
+      A. Delete the spreadsheet
+    </button>
+
+    <button class="option" onclick="checkAnswer(true)">
+      B. Map and transform imported data
+    </button>
+
+    <button class="option" onclick="checkAnswer(false)">
+      C. Create a presentation
+    </button>
+
+    <button class="option" onclick="checkAnswer(false)">
+      D. Design a website
+    </button>
+
+    <div id="quizResult"></div>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 TransformLearn AI | Educational Web Project</p>
+  <p>Import Data • Transform Maps • Spreadsheet • Gemini AI</p>
+</footer>
+
+<script>
+  function scrollToSection(id) {
+    document.getElementById(id).scrollIntoView({
+      behavior: "smooth"
+    });
+  }
+
+  function transformData() {
+    const name = document.getElementById("nameInput").value.trim();
+    const email = document.getElementById("emailInput").value.trim();
+    const transform = document.getElementById("transformSelect").value;
+    const output = document.getElementById("transformOutput");
+
+    if (!name && !email) {
+      output.innerHTML = "⚠️ Please enter sample spreadsheet data.";
+      return;
+    }
+
+    if (transform === "uppercase") {
+      output.innerHTML =
+        "✅ <b>Transformed Name:</b> " +
+        (name || "No name entered").toUpperCase();
+    }
+
+    else if (transform === "lowercase") {
+      output.innerHTML =
+        "✅ <b>Transformed Email:</b> " +
+        (email || "No email entered").toLowerCase();
+    }
+
+    else if (transform === "domain") {
+      if (!email.includes("@")) {
+        output.innerHTML = "⚠️ Please enter a valid email address.";
+        return;
+      }
+
+      const domain = email.split("@")[1];
+
+      output.innerHTML =
+        "✅ <b>Email Domain:</b> " + domain;
+    }
+  }
+
+  function askGemini() {
+    const answer = document.getElementById("geminiAnswer");
+
+    answer.innerHTML =
+      "✨ <b>Gemini AI:</b> A Transform Map defines how data from an imported " +
+      "spreadsheet is matched and converted into fields in the target system. " +
+      "For example, a spreadsheet column called <b>Student Name</b> can be mapped " +
+      "to a target field called <b>Name</b>.";
+  }
+
+  function checkAnswer(correct) {
+    const result = document.getElementById("quizResult");
+
+    if (correct) {
+      result.innerHTML = "✅ Correct! Transform Maps help map and transform imported data.";
+      result.style.color = "#16803c";
+    } else {
+      result.innerHTML = "❌ Try again. Think about mapping source fields to target fields.";
+      result.style.color = "#d14343";
+    }
+  }
+</script>
+
+</body>
+</html>
